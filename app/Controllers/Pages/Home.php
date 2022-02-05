@@ -2,10 +2,12 @@
 
 namespace App\Controllers\Pages;
 
+use App\Utils\View;
+
 class Home
 {
-  public static function index(string $id, string $action)
+  public static function index()
   {
-    return $id . $action;
+    return View::render('pages/home', ['title' => 'ok']);
   }
 }
