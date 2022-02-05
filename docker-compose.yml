@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   webserver:
@@ -8,3 +8,30 @@ services:
       - 8080:80
     volumes:
       - .:/var/www/html:rw
+
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - .docker/dbdata:/var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+  phpmyadmin:
+    depends_on:
+      - db
+      - webserver
+    image: phpmyadmin:5.1
+    restart: always
+    ports:
+      - 8888:80
+    environment:
+      - PMA_HOST=${DB_HOST}
+      - PMA_PORT=${DB_PORT}
+      - PMA_USER=${DB_USER}
+      - PMA_PASSWORD=${DB_PASSWORD}
