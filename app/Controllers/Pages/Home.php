@@ -4,8 +4,8 @@ namespace App\Controllers\Pages;
 
 class Home
 {
-  public static function index()
+  public static function index(string $id, string $action)
   {
-    return 'ok';
+    return $id . $action;
   }
 }

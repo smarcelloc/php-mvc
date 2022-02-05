@@ -2,4 +2,4 @@
 
 use App\Controllers\Pages;
 
-$router->get('/', Pages\Home::index(...));
+$router->get('/{id}/{action}', Pages\Home::index(...));

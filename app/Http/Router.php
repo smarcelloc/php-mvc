@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Exception;
+use ReflectionFunction;
 
 class Router
 {
@@ -19,9 +20,10 @@ class Router
   public function run()
   {
     try {
-      $controller = $this->getRoute();
+      $route = $this->getRoute();
+      $params = $this->defineRouteParams($route);
 
-      $content = call_user_func_array($controller, []);
+      $content = call_user_func_array($route['controller'], $params);
 
       if ($content instanceof Response) {
         return $content;
@@ -40,8 +42,22 @@ class Router
 
   private function addRoute(string $method, string $route, callable $controller)
   {
+    $params = $this->getRouteParams($route);
+
     $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
     $this->routes[$patternRoute][$method] = $controller;
+    $this->routes[$patternRoute]['params'] = $params;
+  }
+
+  private function getRouteParams(&$route)
+  {
+    $patternParams = '/{(.*?)}/';
+    if (preg_match_all($patternParams, $route, $matches)) {
+      $route = preg_replace($patternParams, '(.*?)', $route);
+      return $matches[1];
+    }
+
+    return [];
   }
 
   private function getRoute()
@@ -56,7 +72,7 @@ class Router
   private function validateRoute(string $uri, string $method)
   {
     foreach ($this->routes as $patternRoute => $route) {
-      if (preg_match($patternRoute, $uri)) {
+      if (preg_match($patternRoute, $uri, $paramsValues)) {
 
         if (!isset($route[$method])) {
           throw new Exception('The unauthorized method', 405);
@@ -66,11 +82,26 @@ class Router
           throw new Exception('The URL could not be processed', 500);
         }
 
-        return $route[$method];
+        unset($paramsValues[0]);
+        $preventMultiParamsInEnd = count(explode('/', end($paramsValues)));
+        if ($preventMultiParamsInEnd > 1) {
+          break;
+        }
+
+        return $this->routeMap($route, $method, $paramsValues);
       }
     }
 
     throw new Exception('URL not found', 404);
+  }
+
+  private function routeMap(array $route, string $method, array $paramsValues)
+  {
+    $routeMap['controller'] = $route[$method];
+    $routeMap['params'] = array_combine($route['params'], $paramsValues);
+    $routeMap['params']['request'] = $this->request;
+
+    return $routeMap;
   }
 
   private function setPrefix()
@@ -89,5 +120,23 @@ class Router
 
     $deletePrefixInUri = end(explode($this->prefix, $uri));
     return $deletePrefixInUri;
+  }
+
+  private function defineRouteParams(array $route)
+  {
+    $params = [];
+    $reflaction = new ReflectionFunction($route['controller']);
+
+    foreach ($reflaction->getParameters() as $parameter) {
+      $name = $parameter->getName();
+
+      if ($route['params'][$name] === '') {
+        throw new Exception('URL not found', 404);
+      }
+
+      $params[$name] = $route['params'][$name];
+    }
+
+    return $params;
   }
 }
