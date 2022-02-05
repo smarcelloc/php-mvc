@@ -31,6 +31,13 @@ class Env
     return getenv($key) !== false;
   }
 
+  public static function isEmpty(string $key)
+  {
+    $value = getenv($key);
+
+    return $value !== false ? empty($value) : true;
+  }
+
   private static function readFileEnv(string $filename)
   {
     $content = file($filename, FILE_IGNORE_NEW_LINES + FILE_SKIP_EMPTY_LINES);
