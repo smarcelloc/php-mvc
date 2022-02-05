@@ -11,4 +11,10 @@ class TestimonyRepository
     $testimony = new Testimony();
     return $testimony->order('id DESC')->get();
   }
+
+  public static function delete(int $id)
+  {
+    $testimony = new Testimony();
+    $testimony->where('id=?', $id)->delete();
+  }
 }
