@@ -4,6 +4,8 @@ defined('DIR_ROOT') or define('DIR_ROOT', dirname(__FILE__, 2));
 
 require DIR_ROOT . '/vendor/autoload.php';
 
+App\Utils\Env::load(DIR_ROOT . '/.env');
+
 $router = new App\Http\Router('http://localhost:8080');
 
 foreach (glob(DIR_ROOT . '/routes/*.php') as $filename) {
