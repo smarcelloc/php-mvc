@@ -40,6 +40,26 @@ class Router
     $this->addRoute('GET', $route, $controller);
   }
 
+  public function post(string $route, callable $controller)
+  {
+    $this->addRoute('POST', $route, $controller);
+  }
+
+  public function put(string $route, callable $controller)
+  {
+    $this->addRoute('PUT', $route, $controller);
+  }
+
+  public function patch(string $route, callable $controller)
+  {
+    $this->addRoute('PATCH', $route, $controller);
+  }
+
+  public function delete(string $route, callable $controller)
+  {
+    $this->addRoute('DELETE', $route, $controller);
+  }
+
   private function addRoute(string $method, string $route, callable $controller)
   {
     $params = $this->getRouteParams($route);
