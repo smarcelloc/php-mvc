@@ -6,7 +6,11 @@ require DIR_ROOT . '/vendor/autoload.php';
 
 App\Utils\Env::load(DIR_ROOT . '/.env');
 
-$router = new App\Http\Router('http://localhost:8080');
+foreach (glob(DIR_ROOT . '/config/*.php') as $filename) {
+  require_once $filename;
+}
+
+$router = new App\Http\Router(APP_URL);
 
 foreach (glob(DIR_ROOT . '/routes/*.php') as $filename) {
   include $filename;

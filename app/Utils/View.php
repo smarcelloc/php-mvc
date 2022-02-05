@@ -9,7 +9,7 @@ class View
     extract($vars);
 
     ob_start();
-    include DIR_ROOT . '/resources/views/' . $view . '.php';
+    include DIR_VIEW . '/' . $view . '.php';
     $content = ob_get_contents();
     ob_end_clean();
 
