@@ -15,4 +15,14 @@ class View
 
     return $content;
   }
+
+  public static function template(string $layout, string $view, array $vars = [])
+  {
+    $contentView = View::render($view, $vars);
+
+    return View::render($layout, [
+      'content' => $contentView,
+      ...$vars
+    ]);
+  }
 }
