@@ -57,13 +57,13 @@ class Entity extends ConnectDB
       $this->where
     );
 
-    $this->execute($query, $values);
+    $this->execute($query, array_merge($values, $this->params));
   }
 
   public function delete()
   {
     $query = sprintf('DELETE FROM %s %s', $this->table, $this->where);
-    $this->execute($query);
+    $this->execute($query, $this->params);
   }
 
   public function get(int $mode = PDO::FETCH_DEFAULT)
@@ -88,10 +88,10 @@ class Entity extends ConnectDB
     return $this;
   }
 
-  public function where(string $where, array $params)
+  public function where(string $where, mixed $params)
   {
     $this->where = "WHERE $where";
-    $this->params = $params;
+    $this->params = is_array($params) ? array_values($params) : [$params];
 
     return $this;
   }
