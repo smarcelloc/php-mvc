@@ -75,6 +75,11 @@ class Entity extends ConnectDB
     return $statement->fetchAll($mode);
   }
 
+  public function count(string $count = '*')
+  {
+    return $this->select("COUNT($count) as count")->first(PDO::FETCH_ASSOC)['count'];
+  }
+
   public function first(int $mode = PDO::FETCH_DEFAULT)
   {
     $query = $this->querySelect();
@@ -128,6 +133,12 @@ class Entity extends ConnectDB
   public function limit(int $limit)
   {
     $this->limit = "LIMIT $limit";
+    return $this;
+  }
+
+  public function offset(int $offset)
+  {
+    $this->limit = "$this->limit OFFSET $offset";
     return $this;
   }
 
