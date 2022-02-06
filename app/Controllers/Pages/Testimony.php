@@ -9,11 +9,20 @@ use App\Utils\View;
 
 class Testimony
 {
-  public static function index()
+  public static function index(Request $request)
   {
+    $search = $request->getParams('search');
+    $testimonials = [];
+
+    if (!empty($search)) {
+      $testimonials = TestimonyRepository::getSearch($search);
+    } else {
+      $testimonials = TestimonyRepository::getAll();
+    }
+
     return View::template('layouts/main/index', 'pages/testimony', [
       'title' => 'Testimonials',
-      'testimonials' => TestimonyRepository::getAll(),
+      'testimonials' => $testimonials,
     ]);
   }
 

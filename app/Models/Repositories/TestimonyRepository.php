@@ -25,4 +25,10 @@ class TestimonyRepository
 
     return $id;
   }
+
+  public static function getSearch(string $value)
+  {
+    $testimony = new Testimony();
+    return $testimony->like('name LIKE "%?%"', $value)->get();
+  }
 }
