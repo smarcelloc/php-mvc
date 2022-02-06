@@ -3,6 +3,7 @@
 namespace App\Controllers\Pages;
 
 use App\Http\Redirect;
+use App\Http\Request;
 use App\Models\Repositories\TestimonyRepository;
 use App\Utils\View;
 
@@ -19,6 +20,17 @@ class Testimony
   public static function destroy(int $id)
   {
     TestimonyRepository::delete($id);
+    Redirect::page('/testimonials');
+  }
+
+  public static function store(Request $request)
+  {
+    $data = [
+      'name' => $request->getPosts('name'),
+      'message' => $request->getPosts('message')
+    ];
+
+    TestimonyRepository::insert($data);
     Redirect::page('/testimonials');
   }
 }

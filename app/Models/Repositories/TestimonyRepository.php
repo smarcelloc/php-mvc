@@ -17,4 +17,12 @@ class TestimonyRepository
     $testimony = new Testimony();
     $testimony->where('id=?', $id)->delete();
   }
+
+  public static function insert(array $data)
+  {
+    $testimony = new Testimony();
+    $id = $testimony->insert($data);
+
+    return $id;
+  }
 }
