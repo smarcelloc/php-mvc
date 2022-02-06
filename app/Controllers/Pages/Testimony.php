@@ -5,6 +5,7 @@ namespace App\Controllers\Pages;
 use App\Http\Redirect;
 use App\Http\Request;
 use App\Models\Repositories\TestimonyRepository;
+use App\Utils\Pagination;
 use App\Utils\View;
 
 class Testimony
@@ -12,17 +13,30 @@ class Testimony
   public static function index(Request $request)
   {
     $search = $request->getParams('search');
+    $page = $request->getParams('page', 1);
     $testimonials = [];
 
     if (!empty($search)) {
-      $testimonials = TestimonyRepository::getSearch($search);
+      $count = TestimonyRepository::getSearchCount($search);
+      $pagination = new Pagination($count, $page);
+      $testimonials = TestimonyRepository::getSearch(
+        $search,
+        $pagination->getLimit(),
+        $pagination->getOffset()
+      );
     } else {
-      $testimonials = TestimonyRepository::getAll();
+      $count = TestimonyRepository::getAllCount($search);
+      $pagination = new Pagination($count, $page);
+      $testimonials = TestimonyRepository::getAll(
+        $pagination->getLimit(),
+        $pagination->getOffset()
+      );
     }
 
     return View::template('layouts/main/index', 'pages/testimony', [
       'title' => 'Testimonials',
       'testimonials' => $testimonials,
+      'pagination' => $pagination->getPages()
     ]);
   }
 

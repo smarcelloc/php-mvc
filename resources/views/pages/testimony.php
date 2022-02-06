@@ -17,6 +17,7 @@
     <div class="row">
       <?php if (!empty($testimonials)) : ?>
         <?php include DIR_VIEW . '/components/testimony.php' ?>
+        <?php include DIR_VIEW . '/components/pagination.php' ?>
       <?php else : ?>
         <p>No testimonials were found in our system.</p>
       <?php endif ?>
