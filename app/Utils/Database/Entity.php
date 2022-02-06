@@ -3,6 +3,7 @@
 namespace App\Utils\Database;
 
 use PDO;
+use PDOException;
 
 class Entity extends ConnectDB
 {
@@ -86,6 +87,26 @@ class Entity extends ConnectDB
   {
     $this->select = "SELECT $select";
     return $this;
+  }
+
+  public function like(string $like, mixed $params)
+  {
+    $paramsValues = is_array($params) ? array_values($params) : [$params];
+    $patternLike = '/(["|\'].*?["|\'])/';
+
+    if (!preg_match_all($patternLike, $like, $matches)) {
+      throw new PDOException("ERROR: Must inform the substitution parameter of LIKE, for example '%?%'");
+    }
+
+    $newParams = [];
+    for ($i = 0; $i < count($matches[0]); $i++) {
+      $deleteCommasInKey = preg_replace('/(\'|")/', "", $matches[0][$i]);
+      $newParams[$i] = str_replace('?', strval($paramsValues[$i]), $deleteCommasInKey);
+    }
+
+    $query = preg_replace($patternLike, '?', $like);
+
+    return $this->where($query, $newParams);
   }
 
   public function where(string $where, mixed $params)
