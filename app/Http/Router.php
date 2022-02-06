@@ -31,7 +31,7 @@ class Router
 
       return new Response(200, $content);
     } catch (Exception $ex) {
-      return new Response($ex->getCode(), $ex->getMessage());
+      return new Response(intval($ex->getCode()), $ex->getMessage());
     }
   }
 
