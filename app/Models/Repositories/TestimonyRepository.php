@@ -29,6 +29,6 @@ class TestimonyRepository
   public static function getSearch(string $value)
   {
     $testimony = new Testimony();
-    return $testimony->like('name LIKE "%?%"', $value)->get();
+    return $testimony->whereLike('name LIKE "%?%"', $value)->get();
   }
 }

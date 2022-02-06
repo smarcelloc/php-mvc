@@ -89,7 +89,7 @@ class Entity extends ConnectDB
     return $this;
   }
 
-  public function like(string $like, mixed $params)
+  public function whereLike(string $like, mixed $params, string $operator = 'AND')
   {
     $paramsValues = is_array($params) ? array_values($params) : [$params];
     $patternLike = '/(["|\'].*?["|\'])/';
@@ -101,18 +101,20 @@ class Entity extends ConnectDB
     $newParams = [];
     for ($i = 0; $i < count($matches[0]); $i++) {
       $deleteCommasInKey = preg_replace('/(\'|")/', "", $matches[0][$i]);
-      $newParams[$i] = str_replace('?', strval($paramsValues[$i]), $deleteCommasInKey);
+      $newParams[] = str_replace('?', strval($paramsValues[$i]), $deleteCommasInKey);
     }
 
     $query = preg_replace($patternLike, '?', $like);
 
-    return $this->where($query, $newParams);
+    return $this->where($query, $newParams, $operator);
   }
 
-  public function where(string $where, mixed $params)
+  public function where(string $where, mixed $params, string $operator = 'AND')
   {
-    $this->where = "WHERE $where";
-    $this->params = is_array($params) ? array_values($params) : [$params];
+    $paramsValues = is_array($params) ? array_values($params) : [$params];
+
+    $this->where = empty($this->where) ? "WHERE $where" : "{$this->where} $operator $where";
+    $this->params = empty($this->params) ? $paramsValues : array_merge($this->params, $paramsValues);
 
     return $this;
   }
