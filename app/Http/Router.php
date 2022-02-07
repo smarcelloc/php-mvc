@@ -31,7 +31,9 @@ class Router
 
       return new Response(200, $content);
     } catch (Exception $ex) {
-      return new Response(intval($ex->getCode()), $ex->getMessage());
+      $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
+
+      return new Response($code, $ex->getMessage());
     }
   }
 
@@ -145,9 +147,9 @@ class Router
   private function defineRouteParams(array $route)
   {
     $params = [];
-    $reflaction = new ReflectionFunction($route['controller']);
+    $reflection = new ReflectionFunction($route['controller']);
 
-    foreach ($reflaction->getParameters() as $parameter) {
+    foreach ($reflection->getParameters() as $parameter) {
       $name = $parameter->getName();
 
       if ($route['params'][$name] === '') {
