@@ -36,7 +36,7 @@ class Testimony
     return View::template('layouts/main/index', 'pages/testimony', [
       'title' => 'Testimonials',
       'testimonials' => $testimonials,
-      'pagination' => $pagination->getPages()
+      'pagination' => $pagination,
     ]);
   }
 
