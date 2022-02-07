@@ -11,7 +11,7 @@ class Request
   private array $posts;
   private array $files;
 
-  public function __construct(private Router $router)
+  public function __construct()
   {
     $this->method = $_SERVER['REQUEST_METHOD'] ?? '';
     $this->setUri();
@@ -19,11 +19,6 @@ class Request
     $this->params = $_GET ?? [];
     $this->posts = $_POST ?? [];
     $this->files = $_FILES ?? [];
-  }
-
-  public function getRouter()
-  {
-    return $this->router;
   }
 
   public function getMethod()
