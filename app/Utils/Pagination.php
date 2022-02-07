@@ -25,6 +25,21 @@ class Pagination
     return $this->limit * ($this->currentPage - 1);
   }
 
+  public function getCurrentPage()
+  {
+    return $this->currentPage;
+  }
+
+  public function getCount()
+  {
+    return $this->count;
+  }
+
+  public function getTotalPage()
+  {
+    return $this->totalPage;
+  }
+
   public function getPages()
   {
     if ($this->totalPage === 1) {
