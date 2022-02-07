@@ -14,7 +14,7 @@ class Router
   public function __construct(private string $baseUrl)
   {
     $this->setPrefix();
-    $this->request = new Request();
+    $this->request = new Request($this);
   }
 
   public function run()
