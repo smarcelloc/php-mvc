@@ -10,6 +10,7 @@
 
 <body>
   <?php require DIR_VIEW . '/layouts/main/menu.php' ?>
+  <?php include DIR_VIEW . '/components/alert.php' ?>
   <div class="my-3 container">
     <?= $content ?>
     <?php require DIR_VIEW . '/layouts/main/footer.php' ?>

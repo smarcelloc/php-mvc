@@ -13,6 +13,7 @@
 
     <main class="container">
         <?php include DIR_VIEW . '/layouts/login/header.php' ?>
+        <?php include DIR_VIEW . '/components/alert.php' ?>
         <div class="">
             <?= $content ?>
         </div>

@@ -6,6 +6,7 @@ use App\Http\Redirect;
 use App\Http\Request;
 use App\Http\Response;
 use App\Models\Repositories\UserRepository;
+use App\Utils\SessionFlash;
 use App\Utils\View;
 
 class SignIn
@@ -28,6 +29,7 @@ class SignIn
             Redirect::page('/admin');
         }
 
+        SessionFlash::set(ALERT_ERROR, ['message' => 'The system did not find this user.']);
         return self::index();
     }
 }
