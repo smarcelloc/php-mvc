@@ -10,12 +10,14 @@ use Exception;
 class Queue
 {
     private static array $middlewareMap = [];
+    private static array $middlewareDefault = [];
 
     public function __construct(
         private Closure $controller,
         private array $controllerParams = [],
         private array $middleware = []
     ) {
+        $this->middleware = array_merge(self::$middlewareDefault, $middleware);
     }
 
     public function next(Request $request): Response
@@ -41,5 +43,10 @@ class Queue
     public static function setMap(array $middlewareMap)
     {
         self::$middlewareMap = $middlewareMap;
+    }
+
+    public static function setDefault(array $middlewareDefault = [])
+    {
+        self::$middlewareDefault = $middlewareDefault;
     }
 }

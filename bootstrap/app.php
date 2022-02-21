@@ -13,3 +13,7 @@ foreach (glob(DIR_ROOT . '/config/*.php') as $filename) {
 MiddlewareQueue::setMap([
   'maintenance' => App\Middleware\Maintenance::class
 ]);
+
+MiddlewareQueue::setDefault([
+  'maintenance'
+]);
