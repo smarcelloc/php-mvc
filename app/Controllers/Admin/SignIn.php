@@ -6,6 +6,7 @@ use App\Http\Redirect;
 use App\Http\Request;
 use App\Http\Response;
 use App\Models\Repositories\UserRepository;
+use App\Sessions\AuthAdmin as SessionAuthAdmin;
 use App\Utils\SessionFlash;
 use App\Utils\View;
 
@@ -25,7 +26,9 @@ class SignIn
         $email = $request->getPosts('email');
         $password = $request->getPosts('password');
 
-        if (UserRepository::isAuthenticated($email, $password)) {
+        $user = UserRepository::authenticated($email, $password);
+        if ($user) {
+            SessionAuthAdmin::login($user);
             Redirect::page('/admin');
         }
 
