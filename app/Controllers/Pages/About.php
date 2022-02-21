@@ -2,14 +2,17 @@
 
 namespace App\Controllers\Pages;
 
+use App\Http\Response;
 use App\Utils\View;
 
 class About
 {
   public static function index()
   {
-    return View::template('layouts/main/index', 'pages/about', [
+    $content = View::pageWithLayout('layouts/main/index', 'pages/about', [
       'title' => 'About'
     ]);
+
+    return new Response(200, $content);
   }
 }

@@ -4,25 +4,30 @@ namespace App\Utils;
 
 class View
 {
-  public static function render(string $view, array $vars = [])
+  public static function pageWithLayout(string $layout, string $view, array $vars = [])
+  {
+    $contentView = self::render($view, $vars);
+
+    return self::render($layout, [
+      'content' => $contentView,
+      ...$vars
+    ]);
+  }
+
+  public static function page(string $view, array $vars)
+  {
+    return self::render($view, $vars);
+  }
+
+  private static function render(string $view, array $vars = [])
   {
     extract($vars);
 
     ob_start();
-    include DIR_VIEW . '/' . $view . '.php';
+    include DIR_ROOT . '/resources/views' . '/' . $view . '.php';
     $content = ob_get_contents();
     ob_end_clean();
 
     return $content;
-  }
-
-  public static function template(string $layout, string $view, array $vars = [])
-  {
-    $contentView = View::render($view, $vars);
-
-    return View::render($layout, [
-      'content' => $contentView,
-      ...$vars
-    ]);
   }
 }

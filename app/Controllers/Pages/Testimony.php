@@ -4,6 +4,7 @@ namespace App\Controllers\Pages;
 
 use App\Http\Redirect;
 use App\Http\Request;
+use App\Http\Response;
 use App\Models\Repositories\TestimonyRepository;
 use App\Utils\Pagination;
 use App\Utils\View;
@@ -33,11 +34,13 @@ class Testimony
       );
     }
 
-    return View::template('layouts/main/index', 'pages/testimony', [
+    $content = View::pageWithLayout('layouts/main/index', 'pages/testimony', [
       'title' => 'Testimonials',
       'testimonials' => $testimonials,
       'pagination' => $pagination,
     ]);
+
+    return new Response(200, $content);
   }
 
   public static function destroy(int $id)

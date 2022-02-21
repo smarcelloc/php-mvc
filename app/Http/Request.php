@@ -31,9 +31,13 @@ class Request
     return $this->uri;
   }
 
-  public function getHeaders()
+  public function getHeaders(?string $key = null, mixed $defaultValue = null)
   {
-    return $this->headers;
+    if (is_null($key)) {
+      return $this->headers;
+    }
+
+    return $this->headers[$key] ?? $defaultValue;
   }
 
   public function getParams(?string $key = null, mixed $defaultValue = null)
@@ -67,8 +71,8 @@ class Request
   {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
     $uriSanitize = filter_var($uri, FILTER_SANITIZE_URL);
-    $removeParamsInUrl = explode('?', $uriSanitize)[0];
+    $removeParamsInUri = explode('?', $uriSanitize)[0];
 
-    $this->uri = $removeParamsInUrl;
+    $this->uri = $removeParamsInUri;
   }
 }

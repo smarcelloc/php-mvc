@@ -8,12 +8,9 @@ class Response
 {
   private array $headers = [];
 
-  public function __construct(
-    private int $code,
-    private string $content,
-    private string $contentType = 'text/html'
-  ) {
-    $this->addHeaders(['Content-type' => $contentType]);
+  public function __construct(private int $code, private string $content, private string $contentType = 'text/html')
+  {
+    $this->addHeaders(['ContentType' => $contentType]);
   }
 
   public function addHeaders(array $headers)
@@ -42,7 +39,7 @@ class Response
     http_response_code($this->code);
 
     foreach ($this->headers as $key => $value) {
-      header("$key:$value");
+      header("{$key}:{$value}");
     }
   }
 

@@ -75,9 +75,9 @@ class Entity extends ConnectDB
     return $statement->fetchAll($mode);
   }
 
-  public function count(string $count = '*')
+  public function count(string $count = '*'): int
   {
-    return $this->select("COUNT($count) as count")->first(PDO::FETCH_ASSOC)['count'];
+    return $this->select("COUNT($count) as query_count")->first(PDO::FETCH_OBJ)->query_count;
   }
 
   public function first(int $mode = PDO::FETCH_DEFAULT)
