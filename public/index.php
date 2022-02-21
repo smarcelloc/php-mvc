@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 defined('DIR_ROOT') or define('DIR_ROOT', dirname(__FILE__, 2));
 
 require DIR_ROOT . '/bootstrap/app.php';
