@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Middleware\Queue as MiddlewareQueue;
+use Closure;
 use Exception;
 use ReflectionFunction;
 
@@ -23,9 +25,11 @@ class Router
     try {
       $route = $this->getRoute();
       $controller = $route['controller'];
+      $middleware = $route['middleware'] ?? [];
+      $request = $route['params']['request'];
       $params = $this->reflectionRouteParams($controller, $route['params']);
 
-      return call_user_func_array($controller, $params);
+      return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
     } catch (Exception $ex) {
       $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
 
@@ -33,32 +37,46 @@ class Router
     }
   }
 
-  public function get(string $route, callable $controller)
+  public function get(string $route, Closure $controller)
   {
     $this->addRoute('GET', $route, $controller);
+    return $this;
   }
 
-  public function post(string $route, callable $controller)
+  public function post(string $route, Closure $controller)
   {
     $this->addRoute('POST', $route, $controller);
+    return $this;
   }
 
-  public function delete(string $route, callable $controller)
+  public function delete(string $route, Closure $controller)
   {
     $this->addRoute('DELETE', $route, $controller);
+    return $this;
   }
 
-  public function patch(string $route, callable $controller)
+  public function patch(string $route, Closure $controller)
   {
     $this->addRoute('PATCH', $route, $controller);
+    return $this;
   }
 
-  public function put(string $route, callable $controller)
+  public function put(string $route, Closure $controller)
   {
     $this->addRoute('PUT', $route, $controller);
+    return $this;
   }
 
-  private function addRoute(string $method, string $route, callable $controller)
+  public function middleware(array $middleware)
+  {
+    $patternRoute = array_key_last($this->routes);
+
+    if (is_string($patternRoute)) {
+      $this->routes[$patternRoute]['middleware'] = $middleware;
+    }
+  }
+
+  private function addRoute(string $method, string $route, Closure $controller)
   {
     $params = [];
     $patternParams = '/{(.*?)}/';
@@ -136,7 +154,7 @@ class Router
     return $route;
   }
 
-  private function reflectionRouteParams(callable $controller, array $controllerParams)
+  private function reflectionRouteParams(Closure $controller, array $controllerParams)
   {
     $routeParams = [];
     $reflection = new ReflectionFunction($controller);
