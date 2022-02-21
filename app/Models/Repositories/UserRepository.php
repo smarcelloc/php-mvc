@@ -16,15 +16,15 @@ class UserRepository
         return $id;
     }
 
-    public static function isAuthenticated(string $email, string $password)
+    public static function authenticated(string $email, string $password): null|array
     {
         $user = self::getByEmail($email);
 
-        if (!$user) {
-            return false;
+        if (!$user || !password_verify($password, $user['password'])) {
+            return null;
         }
 
-        return password_verify($password, $user['password']);
+        return $user;
     }
 
     public static function getByEmail(string $email)
