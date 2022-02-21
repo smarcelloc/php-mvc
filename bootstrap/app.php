@@ -12,7 +12,8 @@ foreach (glob(DIR_ROOT . '/config/*.php') as $filename) {
 
 MiddlewareQueue::setMap([
   'maintenance' => App\Middleware\Maintenance::class,
-  'auth_admin' => App\Middleware\AuthAdmin::class
+  'auth_admin_logout' => App\Middleware\AuthAdminLogout::class,
+  'auth_admin_login' => App\Middleware\AuthAdminLogin::class
 ]);
 
 MiddlewareQueue::setDefault([
