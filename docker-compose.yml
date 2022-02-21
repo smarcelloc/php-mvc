@@ -1,33 +1,42 @@
 version: "3.8"
 
 services:
-  webserver:
-    build: .
-    restart: always
-    ports:
-      - 8080:80
-    volumes:
-      - .:/var/www/html:rw
-
   db:
     image: mysql:5.7
-    restart: always
+    restart: unless-stopped
     ports:
       - ${DB_PORT}:3306
     volumes:
-      - .docker/dbdata:/var/lib/mysql:rw
+      - dbdata:/var/lib/mysql:rw
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
+  
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - WORKDIR=/var/www/html
+        - DOCUMENT_ROOT=/var/www/html/public
+        - USER=docker
+        - UID=1000
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - .:/var/www/html:rw
 
   phpmyadmin:
     depends_on:
       - db
-      - webserver
+      - app
     image: phpmyadmin:5.1
-    restart: always
+    restart: unless-stopped
     ports:
       - 8888:80
     environment:
@@ -35,3 +44,6 @@ services:
       - PMA_PORT=${DB_PORT}
       - PMA_USER=${DB_USER}
       - PMA_PASSWORD=${DB_PASSWORD}
+
+volumes:
+  dbdata:
