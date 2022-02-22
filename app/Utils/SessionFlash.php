@@ -6,23 +6,16 @@ class SessionFlash
 {
     private static $flashKey = 'flash';
 
-    public static function get(?string $key = null, mixed $defaultValue = null)
+    public static function get(string $key, mixed $defaultValue = null)
     {
-        if (is_null($key)) {
-            $sessions = $_SESSION;
-            self::destroy();
-
-            return $sessions;
+        if (!self::isExist($key)) {
+            return $defaultValue;
         }
 
-        if (self::isExist($key)) {
-            $session = $_SESSION[self::$flashKey][$key];
-            self::unset($key);
+        $session = $_SESSION[self::$flashKey][$key];
+        self::unset($key);
 
-            return $session;
-        }
-
-        return $defaultValue;
+        return $session;
     }
 
     public static function set(string $key, mixed $value)
