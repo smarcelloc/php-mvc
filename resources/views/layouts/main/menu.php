@@ -15,6 +15,9 @@
         <li class="nav-item">
           <a class="nav-link" href="<?= APP_URL ?>/testimonials">Testimonials</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="<?= APP_URL ?>/admin">Admin</a>
+        </li>
       </ul>
     </div>
   </div>

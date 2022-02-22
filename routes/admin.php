@@ -10,3 +10,6 @@ $router->post('/admin/sign-in', Admin\SignIn::authenticated(...))->middleware(['
 
 $router->get('/admin/sign-up', Admin\SignUp::index(...))->middleware(['auth_admin_logout']);
 $router->post('/admin/sign-up', Admin\SignUp::createAccount(...))->middleware(['auth_admin_logout']);
+
+$router->get('/admin/testimonial', Admin\Testimony::index(...))->middleware(['auth_admin_login']);
+$router->get('/admin/users', Admin\User::index(...))->middleware(['auth_admin_login']);
