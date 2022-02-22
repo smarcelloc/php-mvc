@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use Error;
 use Exception;
 
 class Env
@@ -36,6 +37,17 @@ class Env
     $value = getenv($key);
 
     return $value !== false ? empty($value) : true;
+  }
+
+  public static function required(string $key)
+  {
+    $value = self::get($key, null);
+
+    if (is_null($value)) {
+      throw new Error("You must enter a value for the variable {$key}", 1);
+    }
+
+    return $value;
   }
 
   private static function readFileEnv(string $filename)

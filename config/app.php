@@ -10,5 +10,7 @@ define('APP_URL', rtrim(Env::get('APP_URL', $urlDynamic), '/'));
 
 define('APP_MAINTENANCE', Env::get('APP_MAINTENANCE', false));
 
+define('APP_KEY', Env::required('APP_KEY'));
+
 // DIR
 define('DIR_VIEW', DIR_ROOT . '/resources/views');

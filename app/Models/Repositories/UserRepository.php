@@ -8,7 +8,7 @@ class UserRepository
 {
     public static function insert(array $data)
     {
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $data['password'] = password_hash($data['password'] . APP_KEY, PASSWORD_DEFAULT);
 
         $user = new User();
         $id = $user->insert($data);
@@ -20,7 +20,7 @@ class UserRepository
     {
         $user = self::getByEmail($email);
 
-        if (!$user || !password_verify($password, $user['password'])) {
+        if (!$user || !password_verify($password . APP_KEY, $user['password'])) {
             return null;
         }
 
