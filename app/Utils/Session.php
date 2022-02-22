@@ -6,16 +6,20 @@ class Session
 {
     public static function set(string $key, mixed $value)
     {
-        $_SESSION[$key] = $value;
+        $valueToString = json_encode($value);
+        $_SESSION[$key] = Crypt::encrypt($valueToString);
     }
 
-    public static function get(?string $key = null, mixed $defaultValue = null)
+    public static function get(string $key, mixed $defaultValue = null)
     {
-        if (is_null($key)) {
-            return $_SESSION;
+        if (!self::isExist($key)) {
+            return $defaultValue;
         }
 
-        return $_SESSION[$key] ?? $defaultValue;
+        $hash = $_SESSION[$key];
+        $value = Crypt::decrypt($hash);
+
+        return json_decode($value);
     }
 
     public static function isExist(string $key)
