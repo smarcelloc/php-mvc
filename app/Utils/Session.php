@@ -10,7 +10,7 @@ class Session
         $_SESSION[$key] = Crypt::encrypt($valueToString);
     }
 
-    public static function get(string $key, mixed $defaultValue = null)
+    public static function get(string $key, mixed $defaultValue = null, bool $associative = true)
     {
         if (!self::isExist($key)) {
             return $defaultValue;
@@ -19,7 +19,7 @@ class Session
         $hash = $_SESSION[$key];
         $value = Crypt::decrypt($hash);
 
-        return json_decode($value);
+        return json_decode($value, $associative);
     }
 
     public static function isExist(string $key)
