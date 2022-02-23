@@ -32,6 +32,12 @@ class TestimonyRepository
     return $id;
   }
 
+  public static function update(int $id, array $data)
+  {
+    $testimony = new Testimony();
+    $testimony->where('id=?', $id)->update($data);
+  }
+
   public static function getSearch(string $value, int $limit, int $offset)
   {
     $testimony = new Testimony();
@@ -45,5 +51,10 @@ class TestimonyRepository
   {
     $testimony = new Testimony();
     return $testimony->whereLike('name LIKE "%?%"', $value)->count();
+  }
+
+  public static function getByID(int $id)
+  {
+    return (new Testimony)->where('id=?', $id)->first();
   }
 }

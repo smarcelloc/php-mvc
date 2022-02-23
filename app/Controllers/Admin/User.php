@@ -9,7 +9,7 @@ class User
 {
     public static function index()
     {
-        $content = View::pageWithLayout('/layouts/admin/index', '/admin/users', ['title' => 'Users']);
+        $content = View::pageWithLayout('layouts/admin/index', 'admin/users', ['title' => 'Users']);
         return new Response(200, $content);
     }
 }

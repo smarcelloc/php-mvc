@@ -14,8 +14,8 @@
                     </li>
 
                     <li class="my-auto">
-                        <a href="<?= APP_URL .  '/admin/testimonial' ?>" class="nav-link text-black">
-                            Testimonial
+                        <a href="<?= APP_URL .  '/admin/testimonials' ?>" class="nav-link text-black">
+                            Testimonials
                         </a>
                     </li>
 
