@@ -16,6 +16,16 @@ class UserRepository
         return $id;
     }
 
+    public static function update(int $id, array $data)
+    {
+        if (isset($data['password'])) {
+            $data['password'] = password_hash($data['password'] . APP_KEY, PASSWORD_DEFAULT);
+        }
+
+        $user = new User();
+        $user->where('id=?', $id)->update($data);
+    }
+
     public static function authenticated(string $email, string $password): null|array
     {
         $user = self::getByEmail($email);
@@ -24,11 +34,13 @@ class UserRepository
             return null;
         }
 
+        unset($user['password']);
         return $user;
     }
 
     public static function getByEmail(string $email)
     {
-        return (new User())->select()->where('email = ?', $email)->first();
+        $user = (new User())->select()->where('email = ?', $email)->first();
+        return $user;
     }
 }

@@ -20,8 +20,14 @@
                     </li>
 
                     <li class="my-auto">
-                        <a href="<?= APP_URL .  '/admin/users' ?>" class="nav-link text-black">
-                            Users
+                        <a href="<?= APP_URL .  '/admin/user' ?>" class="nav-link text-black">
+                            User
+                        </a>
+                    </li>
+
+                    <li class="my-auto">
+                        <a href="<?= APP_URL .  '/admin/loggout' ?>" onclick="return confirm('You want to exit the system?')" class="nav-link text-black">
+                            Loggout
                         </a>
                     </li>
                 </ul>

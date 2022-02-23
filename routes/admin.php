@@ -18,4 +18,5 @@ $router->get('/admin/testimonials/update/{id}', Admin\Testimony::edit(...))->mid
 $router->post('/admin/testimonials/update/{id}', Admin\Testimony::update(...))->middleware(['auth_admin_login']);
 $router->get('/admin/testimonials/delete/{id}', Admin\Testimony::destroy(...))->middleware(['auth_admin_login']);
 
-$router->get('/admin/users', Admin\User::index(...))->middleware(['auth_admin_login']);
+$router->get('/admin/user', Admin\User::index(...))->middleware(['auth_admin_login']);
+$router->post('/admin/user', Admin\User::update(...))->middleware(['auth_admin_login']);
