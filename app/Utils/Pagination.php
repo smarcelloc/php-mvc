@@ -9,7 +9,7 @@ class Pagination
   public function __construct(
     private int $count,
     private int $currentPage = 1,
-    private int $limit = 2
+    private int $limit = 10
   ) {
     $this->currentPage = $this->currentPage > 0 ? $this->currentPage : 1;
     $this->calculate();
