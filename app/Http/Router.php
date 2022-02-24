@@ -6,6 +6,7 @@ use App\Middleware\Queue as MiddlewareQueue;
 use Closure;
 use Exception;
 use ReflectionFunction;
+use Throwable;
 use TypeError;
 
 class Router
@@ -155,6 +156,8 @@ class Router
                 return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
             } catch (TypeError $ex) {
                 throw new Exception("URL not found", 404);
+            } catch (Throwable $th) {
+                throw $th;
             }
         } catch (Exception $ex) {
             $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
