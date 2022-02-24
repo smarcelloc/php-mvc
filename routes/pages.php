@@ -1,10 +1,14 @@
 <?php
 
 use App\Controllers\Pages;
+use App\Http\Router;
 
-$router->get('/', Pages\Home::index(...));
-$router->get('/about', Pages\About::index(...));
+Router::get('/', Pages\Home::index(...));
 
-$router->get('/testimonials', Pages\Testimony::index(...));
-$router->post('/testimonials', Pages\Testimony::store(...));
-$router->get('/testimonials/delete/{id}', Pages\Testimony::destroy(...));
+Router::group('/testimonials', function () {
+    Router::get('/', Pages\Testimony::index(...));
+    Router::post('/', Pages\Testimony::store(...));
+    Router::get('/delete/{id}', Pages\Testimony::destroy(...));
+});
+
+Router::get('/about', Pages\About::index(...));
