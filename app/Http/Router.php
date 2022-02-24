@@ -9,166 +9,149 @@ use ReflectionFunction;
 
 class Router
 {
-  private string $prefix;
-  private array $routes = [];
-  private Request $request;
+    private static string $baseUrl;
+    private static string $prefix;
+    private static array $routes;
 
-  public function __construct(private string $baseUrl)
-  {
-    $this->baseUrl = rtrim($baseUrl, '/');
-    $this->setPrefix();
-    $this->request = new Request();
-  }
+    private static array $middleware = [];
+    private static Request $request;
 
-  public function run(): Response
-  {
-    try {
-      $route = $this->getRoute();
-      $controller = $route['controller'];
-      $middleware = $route['middleware'] ?? [];
-      $request = $route['params']['request'];
-      $params = $this->reflectionRouteParams($controller, $route['params']);
-
-      return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
-    } catch (Exception $ex) {
-      $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
-
-      return new Response($code, $ex->getMessage());
-    }
-  }
-
-  public function get(string $route, Closure $controller)
-  {
-    $this->addRoute('GET', $route, $controller);
-    return $this;
-  }
-
-  public function post(string $route, Closure $controller)
-  {
-    $this->addRoute('POST', $route, $controller);
-    return $this;
-  }
-
-  public function delete(string $route, Closure $controller)
-  {
-    $this->addRoute('DELETE', $route, $controller);
-    return $this;
-  }
-
-  public function patch(string $route, Closure $controller)
-  {
-    $this->addRoute('PATCH', $route, $controller);
-    return $this;
-  }
-
-  public function put(string $route, Closure $controller)
-  {
-    $this->addRoute('PUT', $route, $controller);
-    return $this;
-  }
-
-  public function middleware(array $middleware)
-  {
-    $patternRoute = array_key_last($this->routes);
-
-    if (is_string($patternRoute)) {
-      $this->routes[$patternRoute]['middleware'] = $middleware;
-    }
-  }
-
-  private function addRoute(string $method, string $route, Closure $controller)
-  {
-    $params = [];
-    $patternParams = '/{(.*?)}/';
-    if (preg_match_all($patternParams, $route, $matches)) {
-      $route = preg_replace($patternParams, '(.*?)', $route);
-      $params = $matches[1];
+    public static function load(string $baseUrl)
+    {
+        self::$baseUrl = rtrim($baseUrl, '/');
+        self::$request = new Request();
+        self::setPrefix();
     }
 
-    $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
-    $this->routes[$patternRoute][$method] = $controller;
-    $this->routes[$patternRoute]['params'] = $params;
-  }
-
-  private function setPrefix()
-  {
-    $parseUrl = parse_url($this->baseUrl);
-    $this->prefix = $parseUrl['path'] ?? '';
-  }
-
-  private function getRoute()
-  {
-    $uri = $this->getUri();
-    $method = $this->request->getMethod();
-    $route = $this->validateRoute($uri, $method);
-
-    return $route;
-  }
-
-  private function getUri()
-  {
-    $uri = $this->request->getUri();
-
-    if (empty($this->prefix)) {
-      return $uri;
+    private static function setPrefix()
+    {
+        $urlPath = parse_url(self::$baseUrl, PHP_URL_PATH);
+        self::$prefix = $urlPath ?? '';
     }
 
-    $removePrefixInUri = end(explode($this->prefix, $uri));
-    return $removePrefixInUri;
-  }
+    public static function get(string $route, Closure $controller)
+    {
+        self::addRoute('GET', $route, $controller);
+    }
 
-  private function validateRoute(string $uri, string $method)
-  {
-    foreach ($this->routes as $patternRoute => $route) {
-      if (preg_match($patternRoute, $uri, $paramsValues)) {
-        if (!isset($route[$method])) {
-          throw new Exception("The unauthorized method", 405);
+    private static function addRoute(string $method, string $route, Closure $controller)
+    {
+        $params = [];
+        $patternParams = '/{(.*?)}/';
+        if (preg_match_all($patternParams, $route, $matches)) {
+            $route = preg_replace($patternParams, '(.*?)', $route);
+            $params = $matches[1];
         }
 
-        if (empty($route[$method])) {
-          throw new Exception("The URL could not be processed", 500);
-        }
+        $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
+        self::$routes[$patternRoute][$method] = $controller;
+        self::$routes[$patternRoute]['params'] = $params;
+        self::$routes[$patternRoute]['middleware'] = self::$middleware;
 
-        unset($paramsValues[0]);
-        $preventMultipleSlashInParamsEnd = count(explode('/', end($paramsValues))) > 1;
-        if ($preventMultipleSlashInParamsEnd) {
-          break;
-        }
-
-        return $this->routeMap($route, $method, $paramsValues);
-      }
+        self::$middleware = [];
     }
 
-    throw new Exception("URL not found", 404);
-  }
+    public static function middleware(array $middleware)
+    {
+        self::$middleware = $middleware;
+        return new static();
+    }
 
-  private function routeMap(array $route, string $method, array $paramsValues = [])
-  {
-    $route['controller'] = $route[$method];
-    $route['method'] = $method;
-    unset($route[$method]);
+    public static function run(): Response
+    {
+        try {
+            echo '<pre>';
+            var_dump(self::$routes);
+            echo '</pre>';
+            exit;
 
-    $route['params'] = array_combine($route['params'], $paramsValues);
-    $route['params']['request'] = $this->request;
+            $route = self::getRoute();
+            $controller = $route['controller'];
+            $middleware = [];
+            $request = $route['params']['request'];
+            $params = self::reflectionRouteParams($controller, $route['params']);
 
-    return $route;
-  }
+            return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
+        } catch (Exception $ex) {
+            $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
 
-  private function reflectionRouteParams(Closure $controller, array $controllerParams)
-  {
-    $routeParams = [];
-    $reflection = new ReflectionFunction($controller);
+            return new Response($code, $ex->getMessage());
+        }
+    }
 
-    foreach ($reflection->getParameters() as $parameter) {
-      $name = $parameter->getName();
+    private static function getRoute()
+    {
+        $uri = self::getUri();
+        $method = self::$request->getMethod();
+        $route = self::validateRoute($uri, $method);
 
-      if ($controllerParams[$name] === '') {
+        return $route;
+    }
+
+    private static function getUri()
+    {
+        $uri = self::$request->getUri();
+
+        if (empty(self::$prefix)) {
+            return $uri;
+        }
+
+        $removePrefixInUri = end(explode(self::$prefix, $uri));
+        return $removePrefixInUri;
+    }
+
+    private static function validateRoute(string $uri, string $method)
+    {
+        foreach (self::$routes as $patternRoute => $route) {
+            if (preg_match($patternRoute, $uri, $paramsValues)) {
+                if (!isset($route[$method])) {
+                    throw new Exception("The unauthorized method", 405);
+                }
+
+                if (empty($route[$method])) {
+                    throw new Exception("The URL could not be processed", 500);
+                }
+
+                unset($paramsValues[0]);
+                $preventMultipleSlashInParamsEnd = count(explode('/', end($paramsValues))) > 1;
+                if ($preventMultipleSlashInParamsEnd) {
+                    break;
+                }
+
+                return self::routeMap($route, $method, $paramsValues);
+            }
+        }
+
         throw new Exception("URL not found", 404);
-      }
-
-      $routeParams[$name] = $controllerParams[$name];
     }
 
-    return $routeParams;
-  }
+    private static function routeMap(array $route, string $method, array $paramsValues = [])
+    {
+        $route['controller'] = $route[$method];
+        $route['method'] = $method;
+        unset($route[$method]);
+
+        $route['params'] = array_combine($route['params'], $paramsValues);
+        $route['params']['request'] = self::$request;
+
+        return $route;
+    }
+
+    private static function reflectionRouteParams(Closure $controller, array $controllerParams)
+    {
+        $routeParams = [];
+        $reflection = new ReflectionFunction($controller);
+
+        foreach ($reflection->getParameters() as $parameter) {
+            $name = $parameter->getName();
+
+            if ($controllerParams[$name] === '') {
+                throw new Exception("URL not found", 404);
+            }
+
+            $routeParams[$name] = $controllerParams[$name];
+        }
+
+        return $routeParams;
+    }
 }
