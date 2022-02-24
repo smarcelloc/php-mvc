@@ -16,6 +16,9 @@ class Router
     private static array $middleware = [];
     private static Request $request;
 
+    private static string|null $prefixGroup = null;
+    private static bool $isGroup = false;
+
     public static function load(string $baseUrl)
     {
         self::$baseUrl = rtrim($baseUrl, '/');
@@ -34,8 +37,17 @@ class Router
         self::addRoute('GET', $route, $controller);
     }
 
+    public static function post(string $route, Closure $controller)
+    {
+        self::addRoute('POST', $route, $controller);
+    }
+
     private static function addRoute(string $method, string $route, Closure $controller)
     {
+        if (!empty(self::$prefixGroup)) {
+            $route = self::$prefixGroup . rtrim($route, '/');
+        }
+
         $params = [];
         $patternParams = '/{(.*?)}/';
         if (preg_match_all($patternParams, $route, $matches)) {
@@ -48,7 +60,9 @@ class Router
         self::$routes[$patternRoute]['params'] = $params;
         self::$routes[$patternRoute]['middleware'] = self::$middleware;
 
-        self::$middleware = [];
+        if (self::$isGroup !== true) {
+            self::$middleware = [];
+        }
     }
 
     public static function middleware(array $middleware)
@@ -57,17 +71,24 @@ class Router
         return new static();
     }
 
+    public static function group(string $prefix, Closure $callback)
+    {
+        self::$prefixGroup = $prefix;
+        self::$isGroup = true;
+
+        $callback();
+
+        self::$prefixGroup = null;
+        self::$isGroup = false;
+        self::$middleware = [];
+    }
+
     public static function run(): Response
     {
         try {
-            echo '<pre>';
-            var_dump(self::$routes);
-            echo '</pre>';
-            exit;
-
             $route = self::getRoute();
             $controller = $route['controller'];
-            $middleware = [];
+            $middleware = $route['middleware'];
             $request = $route['params']['request'];
             $params = self::reflectionRouteParams($controller, $route['params']);
 
