@@ -44,6 +44,38 @@ class Router
         self::addRoute('POST', $route, $controller);
     }
 
+    public static function put(string $route, Closure $controller)
+    {
+        self::addRoute('PUT', $route, $controller);
+    }
+
+    public static function delete(string $route, Closure $controller)
+    {
+        self::addRoute('DELETE', $route, $controller);
+    }
+
+    public static function options(string $route, Closure $controller)
+    {
+        self::addRoute('OPTIONS', $route, $controller);
+    }
+
+    public static function patch(string $route, Closure $controller)
+    {
+        self::addRoute('PATCH', $route, $controller);
+    }
+
+    public static function add(string $method, string $route, Closure $controller)
+    {
+        self::addRoute(strtoupper($method), $route, $controller);
+    }
+
+    public static function match(array $methods, string $route, Closure $controller)
+    {
+        foreach ($methods as $method) {
+            self::addRoute(strtoupper($method), $route, $controller);
+        }
+    }
+
     private static function addRoute(string $method, string $route, Closure $controller)
     {
         $route = rtrim($route, '/');
