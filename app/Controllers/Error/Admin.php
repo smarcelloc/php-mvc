@@ -13,7 +13,7 @@ class Admin
     public static function index(int $code, Exception $ex)
     {
         if (!SessionAuthAdmin::isLogged()) {
-            Redirect::page('/admin/login');
+            Redirect::permanently('/admin/login');
         }
 
         $content = View::pageWithLayout('/layouts/admin/index', '/errors/admin', [

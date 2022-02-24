@@ -21,7 +21,7 @@ Router::middleware(['auth_admin_login'])::group('/admin', function () {
 
 Router::middleware(['auth_admin_logout'])::group('/admin/login', function () {
     Router::get('/', function () {
-        Redirect::page('/admin/login/sign-in');
+        Redirect::permanently('/admin/login/sign-in');
     });
 
     Router::get('/sign-in', Admin\SignIn::index(...));

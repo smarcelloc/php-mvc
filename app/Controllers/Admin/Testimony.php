@@ -46,7 +46,7 @@ class Testimony
     public static function destroy(int $id)
     {
         TestimonyRepository::delete($id);
-        Redirect::page('/admin/testimonials');
+        Redirect::permanently('/admin/testimonials');
     }
 
     public static function add()
@@ -77,7 +77,7 @@ class Testimony
         ];
 
         TestimonyRepository::insert($data);
-        Redirect::page('/admin/testimonials');
+        Redirect::permanently('/admin/testimonials');
     }
 
     public static function update(Request $request)
@@ -89,6 +89,6 @@ class Testimony
         ];
 
         TestimonyRepository::update($id, $data);
-        Redirect::page('/admin/testimonials');
+        Redirect::permanently('/admin/testimonials');
     }
 }

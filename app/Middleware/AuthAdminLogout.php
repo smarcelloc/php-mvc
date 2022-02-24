@@ -14,7 +14,7 @@ class AuthAdminLogout implements Middleware
     public function handle(Request $request, Closure $next): Response
     {
         if (SessionAuthAdmin::isLogged()) {
-            Redirect::page('/admin');
+            Redirect::permanently('/admin');
         }
 
         return $next($request);

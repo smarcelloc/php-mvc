@@ -29,7 +29,7 @@ class SignIn
         $user = UserRepository::authenticated($email, $password);
         if ($user) {
             SessionAuthAdmin::login($user);
-            Redirect::page('/admin');
+            Redirect::permanently('/admin');
         }
 
         SessionFlash::set(ALERT_ERROR, ['message' => 'The system did not find this user.']);

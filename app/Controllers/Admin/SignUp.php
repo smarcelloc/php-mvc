@@ -29,6 +29,6 @@ class SignUp
 
         UserRepository::insert($data);
 
-        Redirect::page('/admin/login/sign-in');
+        Redirect::permanently('/admin/login/sign-in');
     }
 }

@@ -14,7 +14,7 @@ class AuthAdminLogin implements Middleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!SessionAuthAdmin::isLogged()) {
-            Redirect::page('/admin/login');
+            Redirect::permanently('/admin/login');
         }
 
         return $next($request);

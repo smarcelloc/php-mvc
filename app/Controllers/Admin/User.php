@@ -17,7 +17,7 @@ class User
         $user = AuthAdmin::getUser();
         if (!$user) {
             AuthAdmin::destroy();
-            Redirect::page('/admin');
+            Redirect::permanently('/admin');
         }
 
         $content = View::pageWithLayout('layouts/admin/index', 'admin/user', [
@@ -33,7 +33,7 @@ class User
         $id = AuthAdmin::getUser('id');
         if (!$id) {
             AuthAdmin::destroy();
-            Redirect::page('/admin');
+            Redirect::permanently('/admin');
         }
 
         $password = $request->getPosts('password');
@@ -51,6 +51,6 @@ class User
         unset($data['password']);
         AuthAdmin::setUser($data);
 
-        Redirect::page('/admin');
+        Redirect::permanently('/admin');
     }
 }
