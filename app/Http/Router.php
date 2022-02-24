@@ -6,6 +6,7 @@ use App\Middleware\Queue as MiddlewareQueue;
 use Closure;
 use Exception;
 use ReflectionFunction;
+use TypeError;
 
 class Router
 {
@@ -14,6 +15,7 @@ class Router
     private static array $routes;
 
     private static array $middleware = [];
+    private static array $subMiddleware = [];
     private static Request $request;
 
     private static string|null $prefixGroup = null;
@@ -46,7 +48,7 @@ class Router
     {
         $route = rtrim($route, '/');
 
-        if (!empty(self::$prefixGroup)) {
+        if (self::$isGroup && !empty(self::$prefixGroup)) {
             $route = self::$prefixGroup . $route;
         }
 
@@ -60,15 +62,22 @@ class Router
         $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
         self::$routes[$patternRoute][$method] = $controller;
         self::$routes[$patternRoute]['params'] = $params;
-        self::$routes[$patternRoute]['middleware'] = self::$middleware;
+        self::$routes[$patternRoute]['middleware'] = array_merge(self::$middleware, self::$subMiddleware);
 
         if (self::$isGroup !== true) {
             self::$middleware = [];
+        } else {
+            self::$subMiddleware = [];
         }
     }
 
     public static function middleware(array $middleware)
     {
+        if (self::$isGroup) {
+            self::$subMiddleware = $middleware;
+            return new static();
+        }
+
         self::$middleware = $middleware;
         return new static();
     }
@@ -94,7 +103,11 @@ class Router
             $request = $route['params']['request'];
             $params = self::reflectionRouteParams($controller, $route['params']);
 
-            return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
+            try {
+                return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
+            } catch (TypeError $ex) {
+                throw new Exception("URL not found", 404);
+            }
         } catch (Exception $ex) {
             $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
 
