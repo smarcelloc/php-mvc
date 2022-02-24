@@ -12,5 +12,5 @@
         <label for="password">Password</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Sign Up</button>
-    <a href="<?= APP_URL . '/admin/sign-in' ?>">Back Sign In</a>
+    <a href="<?= APP_URL . '/admin/login/sign-in' ?>">Back Sign In</a>
 </form>

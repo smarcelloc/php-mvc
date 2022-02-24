@@ -18,6 +18,6 @@ class Home
     public static function logout()
     {
         AuthAdmin::destroy();
-        Redirect::page('/admin/sign-in');
+        Redirect::page('/admin/login/sign-in');
     }
 }

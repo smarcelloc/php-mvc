@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\Admin;
+use App\Http\Redirect;
 use App\Http\Router;
 
 Router::middleware(['auth_admin_login'])::group('/admin', function () {
@@ -18,7 +19,11 @@ Router::middleware(['auth_admin_login'])::group('/admin', function () {
     Router::post('/user', Admin\User::update(...));
 });
 
-Router::middleware(['auth_admin_logout'])::group('/admin', function () {
+Router::middleware(['auth_admin_logout'])::group('/admin/login', function () {
+    Router::get('/', function () {
+        Redirect::page('/admin/login/sign-in');
+    });
+
     Router::get('/sign-in', Admin\SignIn::index(...));
     Router::post('/sign-in', Admin\SignIn::authenticated(...));
 

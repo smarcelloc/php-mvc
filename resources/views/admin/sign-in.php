@@ -8,5 +8,5 @@
         <label for="password">Password</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Sign in</button>
-    <a href="<?= APP_URL . '/admin/sign-up' ?>">I want to register a new account</a>
+    <a href="<?= APP_URL . '/admin/login/sign-up' ?>">I want to register a new account</a>
 </form>
