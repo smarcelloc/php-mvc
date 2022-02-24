@@ -44,8 +44,10 @@ class Router
 
     private static function addRoute(string $method, string $route, Closure $controller)
     {
+        $route = rtrim($route, '/');
+
         if (!empty(self::$prefixGroup)) {
-            $route = self::$prefixGroup . rtrim($route, '/');
+            $route = self::$prefixGroup . $route;
         }
 
         $params = [];
@@ -165,11 +167,6 @@ class Router
 
         foreach ($reflection->getParameters() as $parameter) {
             $name = $parameter->getName();
-
-            if ($controllerParams[$name] === '') {
-                throw new Exception("URL not found", 404);
-            }
-
             $routeParams[$name] = $controllerParams[$name];
         }
 

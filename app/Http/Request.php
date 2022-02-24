@@ -70,7 +70,7 @@ class Request
   private function setUri()
   {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $uriSanitize = filter_var($uri, FILTER_SANITIZE_URL);
+    $uriSanitize = filter_var(rtrim($uri, '/'), FILTER_SANITIZE_URL);
     $removeParamsInUri = explode('?', $uriSanitize)[0];
 
     $this->uri = $removeParamsInUri;
