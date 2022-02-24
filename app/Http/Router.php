@@ -21,6 +21,8 @@ class Router
     private static string|null $prefixGroup = null;
     private static bool $isGroup = false;
 
+    private static array $routesError = [];
+
     public static function load(string $baseUrl)
     {
         self::$baseUrl = rtrim($baseUrl, '/');
@@ -78,7 +80,7 @@ class Router
 
     private static function addRoute(string $method, string $route, Closure $controller)
     {
-        $route = rtrim($route, '/');
+        $route = str_replace('*', '.*', rtrim($route, '/'));
 
         if (self::$isGroup && !empty(self::$prefixGroup)) {
             $route = self::$prefixGroup . $route;
@@ -126,6 +128,15 @@ class Router
         self::$middleware = [];
     }
 
+    public static function setErrors(array $error = [])
+    {
+        foreach (array_reverse($error) as $route => $controller) {
+            $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
+            $patternRoute = str_replace('*', '.*', $patternRoute);
+            self::$routesError[$patternRoute] = $controller;
+        }
+    }
+
     public static function run(): Response
     {
         try {
@@ -142,6 +153,12 @@ class Router
             }
         } catch (Exception $ex) {
             $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
+
+            foreach (self::$routesError as $patternRoute => $controller) {
+                if (preg_match($patternRoute, self::getUri())) {
+                    return call_user_func_array($controller, [$code, $ex]);
+                }
+            }
 
             return new Response($code, $ex->getMessage());
         }
