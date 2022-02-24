@@ -80,7 +80,7 @@ class Router
 
     private static function addRoute(string $method, string $route, Closure $controller)
     {
-        $route = str_replace('*', '.*', rtrim($route, '/'));
+        $route = rtrim($route, '/');
 
         if (self::$isGroup && !empty(self::$prefixGroup)) {
             $route = self::$prefixGroup . $route;
