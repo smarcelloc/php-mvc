@@ -8,7 +8,7 @@ class Response
 {
   private array $headers = [];
 
-  public function __construct(private int $code, private string $content, private string $contentType = 'text/html')
+  public function __construct(private int $code, private mixed $content, private string $contentType = RESPONSE_HTML)
   {
     $this->addHeaders(['ContentType' => $contentType]);
   }
@@ -25,8 +25,12 @@ class Response
     $this->sendHeaders();
 
     switch ($this->contentType) {
-      case 'text/html':
+      case RESPONSE_HTML:
         $this->sendTextHtml();
+        exit;
+
+      case RESPONSE_JSON:
+        $this->sendAppJson();
         exit;
 
       default:
@@ -46,5 +50,10 @@ class Response
   private function sendTextHtml()
   {
     echo $this->content;
+  }
+
+  private function sendAppJson()
+  {
+    echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
   }
 }
