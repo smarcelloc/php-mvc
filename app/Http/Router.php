@@ -51,6 +51,11 @@ class Router
         self::addRoute('PUT', $route, $controller);
     }
 
+    public static function patch(string $route, Closure $controller)
+    {
+        self::addRoute('PATCH', $route, $controller);
+    }
+
     public static function delete(string $route, Closure $controller)
     {
         self::addRoute('DELETE', $route, $controller);
@@ -61,9 +66,9 @@ class Router
         self::addRoute('OPTIONS', $route, $controller);
     }
 
-    public static function patch(string $route, Closure $controller)
+    public static function head(string $route, Closure $controller)
     {
-        self::addRoute('PATCH', $route, $controller);
+        self::addRoute('HEAD', $route, $controller);
     }
 
     public static function add(string $method, string $route, Closure $controller)
