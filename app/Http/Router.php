@@ -6,8 +6,6 @@ use App\Middleware\Queue as MiddlewareQueue;
 use Closure;
 use Exception;
 use ReflectionFunction;
-use Throwable;
-use TypeError;
 
 class Router
 {
@@ -100,9 +98,9 @@ class Router
         }
 
         $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
-        self::$routes[$patternRoute][$method] = $controller;
-        self::$routes[$patternRoute]['params'] = $params;
-        self::$routes[$patternRoute]['middleware'] = array_merge(self::$middleware, self::$subMiddleware);
+        self::$routes[$patternRoute][$method]['controller'] = $controller;
+        self::$routes[$patternRoute][$method]['params'] = $params;
+        self::$routes[$patternRoute][$method]['middleware'] = array_merge(self::$middleware, self::$subMiddleware);
 
         if (self::$isGroup !== true) {
             self::$middleware = [];
@@ -146,11 +144,11 @@ class Router
     public static function run(): Response
     {
         try {
-            $route = self::getRoute();
-            $controller = $route['controller'];
-            $middleware = $route['middleware'];
-            $request = $route['params']['request'];
-            $params = self::reflectionRouteParams($controller, $route['params']);
+            $routeCurrent = self::getRouteCurrent();
+            $controller = $routeCurrent['controller'];
+            $middleware = $routeCurrent['middleware'];
+            $request = $routeCurrent['params']['request'];
+            $params = self::reflectionRouteParams($controller, $routeCurrent['params']);
 
             return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
         } catch (Exception $ex) {
@@ -166,7 +164,7 @@ class Router
         }
     }
 
-    private static function getRoute()
+    private static function getRouteCurrent()
     {
         $uri = self::getUri();
         $method = self::$request->getMethod();
@@ -205,19 +203,15 @@ class Router
                     break;
                 }
 
-                return self::routeMap($route, $method, $paramsValues);
+                return self::routeMap($route[$method], $paramsValues);
             }
         }
 
         throw new Exception("URL not found", 404);
     }
 
-    private static function routeMap(array $route, string $method, array $paramsValues = [])
+    private static function routeMap(array $route, array $paramsValues = [])
     {
-        $route['controller'] = $route[$method];
-        $route['method'] = $method;
-        unset($route[$method]);
-
         $route['params'] = array_combine($route['params'], $paramsValues);
         $route['params']['request'] = self::$request;
 
