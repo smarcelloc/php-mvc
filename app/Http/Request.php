@@ -17,7 +17,7 @@ class Request
     $this->setUri();
     $this->headers = getallheaders() ?? [];
     $this->params = $_GET ?? [];
-    $this->posts = $_POST ?? [];
+    $this->setPosts();
     $this->files = $_FILES ?? [];
   }
 
@@ -58,6 +58,16 @@ class Request
     return $this->posts[$key] ?? $defaultValue;
   }
 
+  private function setPosts()
+  {
+    if (!empty($_POST)) {
+      $this->posts = $_POST;
+    } else {
+      $inputRaw = file_get_contents('php://input');
+      $this->posts = strlen($inputRaw) ? json_decode($inputRaw, true) : [];
+    }
+  }
+
   public function getFiles(?string $key = null, mixed $defaultValue = null)
   {
     if (is_null($key)) {
@@ -74,5 +84,15 @@ class Request
     $removeParamsInUri = explode('?', $uriSanitize)[0];
 
     $this->uri = $removeParamsInUri;
+  }
+
+  public function getBodyJson()
+  {
+  }
+
+  public function setBodyJson()
+  {
+    $body = file_get_contents('php://input');
+    $this->json = json_decode($body, true);
   }
 }
