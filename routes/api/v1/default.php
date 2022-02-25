@@ -3,6 +3,8 @@
 use App\Controllers\Api;
 use App\Http\Router;
 
+include __DIR__ . '/auth.php';
+
 Router::group('/api/v1', function () {
     Router::get('/', Api\Home::index(...));
 });

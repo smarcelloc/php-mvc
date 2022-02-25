@@ -43,4 +43,12 @@ class UserRepository
         $user = (new User())->select()->where('email = ?', $email)->first();
         return $user;
     }
+
+    public static function getById(int $id)
+    {
+        $user = (new User())->where('id=?', $id)->first();
+        unset($user['password']);
+
+        return $user;
+    }
 }
