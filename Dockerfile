@@ -14,9 +14,6 @@ ENV APACHE_DOCUMENT_ROOT=${DOCUMENT_ROOT}
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Install extensions PHP (PERL)
-RUN docker-php-ext-install pdo_mysql
-
 # Install Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php
@@ -25,6 +22,16 @@ RUN mv composer.phar /usr/local/bin/composer
 
 # Create user in Docker
 RUN useradd -G www-data,root -u ${UID} -d /home/${USER} ${USER}
+
+# Install system dependencies
+RUN apt-get update
+RUN apt-get install -y libzip-dev zip unzip
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions PHP (PERL)
+RUN docker-php-ext-install pdo_mysql zip
 
 # Set working directory and user
 WORKDIR ${WORKDIR}
