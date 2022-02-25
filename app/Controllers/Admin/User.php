@@ -7,7 +7,6 @@ use App\Http\Request;
 use App\Http\Response;
 use App\Models\Repositories\UserRepository;
 use App\Sessions\AuthAdmin;
-use App\Utils\Session;
 use App\Utils\View;
 
 class User

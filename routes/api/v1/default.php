@@ -15,4 +15,7 @@ Router::middleware(['user_basic_auth'])::group('/api/v1', function () {
     Router::post('/testimonials', Api\Testimony::create(...));
     Router::delete('/testimonials/{id}', Api\Testimony::destroy(...));
     Router::patch('/testimonials/{id}', Api\Testimony::update(...));
+
+    Router::get('/user', Api\User::index(...));
+    Router::patch('/user', Api\User::update(...));
 });
