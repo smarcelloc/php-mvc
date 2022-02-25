@@ -21,6 +21,7 @@ class Testimony
 
         $data = [
             'testimonials' => $testimonials,
+            'user' => $request->user,
             'pagination' => [
                 'pageCurrent' => $pagination->getCurrentPage(),
                 'pageTotal' => $pagination->getTotalPage()
@@ -52,5 +53,29 @@ class Testimony
 
         $testimony = array_merge(['id' => $id], $data);
         return new Response(201, $testimony, RESPONSE_JSON);
+    }
+
+    public static function destroy(int $id)
+    {
+        TestimonyRepository::delete($id);
+        return new Response(200, ['message' => 'Successfully deleted Testimony'], RESPONSE_JSON);
+    }
+
+    public static function update(int $id, Request $request)
+    {
+        $user = TestimonyRepository::getByID($id);
+        if (!$user) {
+            throw new Exception("Not Found", 404);
+        }
+
+        $posts = array_merge($user, $request->getPosts());
+
+        $data = [
+            'name' => $posts['name'],
+            'message' => $posts['message']
+        ];
+
+        TestimonyRepository::update($id, $data);
+        return new Response(200, ['message' => 'Successfully deleted Testimony'], RESPONSE_JSON);
     }
 }
