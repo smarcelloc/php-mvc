@@ -40,4 +40,17 @@ class Testimony
 
         return new Response(200, $data, RESPONSE_JSON);
     }
+
+    public static function create(Request $request)
+    {
+        $data = [
+            'name' => $request->getPosts('name'),
+            'message' => $request->getPosts('message')
+        ];
+
+        $id = TestimonyRepository::insert($data);
+
+        $testimony = array_merge(['id' => $id], $data);
+        return new Response(201, $testimony, RESPONSE_JSON);
+    }
 }

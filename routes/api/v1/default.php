@@ -8,4 +8,5 @@ Router::group('/api/v1', function () {
 
     Router::get('/testimonials', Api\Testimony::index(...));
     Router::get('/testimonials/{id}', Api\Testimony::query(...));
+    Router::post('/testimonials', Api\Testimony::create(...));
 });
