@@ -152,13 +152,7 @@ class Router
             $request = $route['params']['request'];
             $params = self::reflectionRouteParams($controller, $route['params']);
 
-            try {
-                return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
-            } catch (TypeError $ex) {
-                throw new Exception("URL not found", 404);
-            } catch (Throwable $th) {
-                throw $th;
-            }
+            return (new MiddlewareQueue($controller, $params,  $middleware))->next($request);
         } catch (Exception $ex) {
             $code = is_numeric($ex->getCode()) ? intval($ex->getCode()) : 500;
 

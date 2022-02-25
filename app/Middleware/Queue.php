@@ -6,6 +6,8 @@ use App\Http\Request;
 use App\Http\Response;
 use Closure;
 use Exception;
+use Throwable;
+use TypeError;
 
 class Queue
 {
@@ -23,7 +25,7 @@ class Queue
     public function next(Request $request): Response
     {
         if (empty($this->middleware)) {
-            return call_user_func_array($this->controller, $this->controllerParams);
+            return $this->executeController();
         }
 
         $middleware = array_shift($this->middleware);
@@ -48,5 +50,16 @@ class Queue
     public static function setDefault(array $middlewareDefault = [])
     {
         self::$middlewareDefault = $middlewareDefault;
+    }
+
+    private function executeController()
+    {
+        try {
+            return call_user_func_array($this->controller, $this->controllerParams);
+        } catch (TypeError $ex) {
+            throw new Exception("URL not found", 404, $ex);
+        } catch (Throwable $th) {
+            throw $th;
+        }
     }
 }
