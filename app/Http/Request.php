@@ -15,10 +15,10 @@ class Request
   {
     $this->method = $_SERVER['REQUEST_METHOD'] ?? '';
     $this->setUri();
-    $this->headers = getallheaders() ?? [];
-    $this->params = $_GET ?? [];
+    $this->headers = array_change_key_case(getallheaders(), CASE_LOWER) ?? [];
+    $this->params = array_change_key_case($_GET, CASE_LOWER) ?? [];
     $this->setPosts();
-    $this->files = $_FILES ?? [];
+    $this->files = array_change_key_case($_FILES, CASE_LOWER) ?? [];
   }
 
   public function getMethod()
@@ -33,29 +33,17 @@ class Request
 
   public function getHeaders(?string $key = null, mixed $defaultValue = null)
   {
-    if (is_null($key)) {
-      return $this->headers;
-    }
-
-    return $this->headers[$key] ?? $defaultValue;
+    return $this->foundKeyArray($this->headers, $key, $defaultValue);
   }
 
   public function getParams(?string $key = null, mixed $defaultValue = null)
   {
-    if (is_null($key)) {
-      return $this->params;
-    }
-
-    return $this->params[$key] ?? $defaultValue;
+    return $this->foundKeyArray($this->params, $key, $defaultValue);
   }
 
   public function getPosts(?string $key = null, mixed $defaultValue = null)
   {
-    if (is_null($key)) {
-      return $this->posts;
-    }
-
-    return $this->posts[$key] ?? $defaultValue;
+    return $this->foundKeyArray($this->posts, $key, $defaultValue);
   }
 
   private function setPosts()
@@ -66,15 +54,13 @@ class Request
       $inputRaw = file_get_contents('php://input');
       $this->posts = strlen($inputRaw) ? json_decode($inputRaw, true) : [];
     }
+
+    $this->posts = array_change_key_case($this->posts, CASE_LOWER);
   }
 
   public function getFiles(?string $key = null, mixed $defaultValue = null)
   {
-    if (is_null($key)) {
-      return $this->files;
-    }
-
-    return $this->files[$key] ?? $defaultValue;
+    return $this->foundKeyArray($this->files, $key, $defaultValue);
   }
 
   private function setUri()
@@ -86,13 +72,12 @@ class Request
     $this->uri = $removeParamsInUri;
   }
 
-  public function getBodyJson()
+  private function foundKeyArray(array $array, ?string $key = null, mixed $defaultValue = null)
   {
-  }
+    if (is_null($key)) {
+      return $array;
+    }
 
-  public function setBodyJson()
-  {
-    $body = file_get_contents('php://input');
-    $this->json = json_decode($body, true);
+    return $array[strtolower($key)] ?? $defaultValue;
   }
 }
