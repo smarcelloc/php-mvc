@@ -8,7 +8,7 @@ Router::middleware(['auth_admin_login'])::group('/admin', function () {
     Router::get('/', Admin\Home::index(...));
     Router::get('/loggout', Admin\Home::logout(...));
 
-    Router::get('/testimonials', Admin\Testimony::index(...));
+    Router::middleware(['cache'])::get('/testimonials', Admin\Testimony::index(...));
     Router::get('/testimonials/add', Admin\Testimony::add(...));
     Router::post('/testimonials/add', Admin\Testimony::store(...));
     Router::get('/testimonials/update/{id}', Admin\Testimony::edit(...));

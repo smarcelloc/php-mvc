@@ -15,7 +15,8 @@ MiddlewareQueue::setMap([
   'auth_admin_logout' => App\Middleware\AuthAdminLogout::class,
   'auth_admin_login' => App\Middleware\AuthAdminLogin::class,
   'user_basic_auth' => App\Middleware\UserBasicAuth::class,
-  'jwt_auth' => App\Middleware\JwtAuth::class
+  'jwt_auth' => App\Middleware\JwtAuth::class,
+  'cache' => App\Middleware\Cache::class
 ]);
 
 MiddlewareQueue::setDefault([

@@ -6,7 +6,7 @@ use App\Http\Router;
 Router::get('/', Pages\Home::index(...));
 
 Router::group('/testimonials', function () {
-    Router::get('/', Pages\Testimony::index(...));
+    Router::middleware(['cache'])::get('/', Pages\Testimony::index(...));
     Router::post('/', Pages\Testimony::store(...));
     Router::get('/delete/{id}', Pages\Testimony::destroy(...));
 });

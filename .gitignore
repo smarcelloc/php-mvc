@@ -1,4 +1,4 @@
 /vendor
-/.docker/dbdata
+/storage/cache/*
 
 .env
