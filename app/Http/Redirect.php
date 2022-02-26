@@ -11,12 +11,12 @@ class Redirect
 
   public static function temporary(string $uri)
   {
-    self::temporary($uri);
+    self::temporary($uri, 307);
   }
 
   public static function go(string $uri, int $code)
   {
-    header("Location:" . APP_URL . $uri, response_code: $code);
+    header("Location:" . APP_URL . $uri, false, $code);
     exit(0);
   }
 }

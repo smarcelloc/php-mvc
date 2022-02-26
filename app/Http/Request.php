@@ -15,7 +15,7 @@ class Request
   {
     $this->method = $_SERVER['REQUEST_METHOD'] ?? '';
     $this->setUri();
-    $this->headers = array_change_key_case(getallheaders(), CASE_LOWER) ?? [];
+    $this->headers = array_change_key_case(getallheaders() ?? [], CASE_LOWER);
     $this->params = array_change_key_case($_GET, CASE_LOWER) ?? [];
     $this->setPosts();
     $this->files = array_change_key_case($_FILES, CASE_LOWER) ?? [];
