@@ -25,12 +25,11 @@ class Cache implements Middleware
 
     private function isCacheable(Request $request)
     {
-        header('Cache-Control:12');
         if (CACHE_ENABLE !== true || CACHE_TIME <= 0) return false;
         if ($request->getMethod() !== 'GET') return false;
 
-        // $cacheControl = $request->getHeaders('Cache-Control', '');
-        // if (strpos($cacheControl, 'no-cache') !== false) return false;
+        $cacheControl = $request->getHeaders('Cache-Control', '');
+        if (strpos($cacheControl, 'no-cache') !== false) return false;
 
         return true;
     }
